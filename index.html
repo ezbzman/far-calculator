@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAR Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f4efe6;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: #faf6ee;
+    border: 1px solid #1a1f1a;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 28px;
+    margin-bottom: 32px;
+    color: #1a1f1a;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: #6b6960;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .input-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    border-bottom: 2px solid #1a1f1a;
+    padding-bottom: 8px;
+    margin-bottom: 28px;
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 600;
+    color: #1a1f1a;
+    width: 200px;
+    text-align: right;
+    outline: none;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input { -moz-appearance: textfield; }
+
+  .unit {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    color: #6b6960;
+    font-style: italic;
+  }
+
+  .divider {
+    border-top: 1px dashed #c9c4ba;
+    margin: 12px 0 28px;
+  }
+
+  .proposed {
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #6b6960;
+  }
+
+  .proposed-value {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1f1a;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .result-label {
+    font-size: 13px;
+    color: #6b6960;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .result {
+    font-family: 'Fraunces', serif;
+    font-size: 72px;
+    font-weight: 700;
+    color: #6b4423;
+    line-height: 1;
+  }
+
+  .note {
+    margin-top: 24px;
+    font-size: 12px;
+    color: #6b6960;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>FAR Calculator</h1>
+
+    <label for="sqft">Lot Size</label>
+    <div class="input-row">
+      <input type="number" id="sqft" step="100" min="0" placeholder="0" autofocus>
+      <span class="unit">sq ft</span>
+    </div>
+
+    <label for="floors">Floors Proposed</label>
+    <div class="input-row">
+      <input type="number" id="floors" step="1" min="0" placeholder="0">
+      <span class="unit">floors</span>
+    </div>
+
+    <div class="proposed">
+      Building area
+      <span class="proposed-value" id="proposed">—</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="result-label">Permitted FAR</div>
+    <div class="result" id="result">—</div>
+    <div class="note">1,410 sq ft per floor</div>
+  </div>
+
+<script>
+  const SQFT_PER_FLOOR = 1410;
+  const sqftInput = document.getElementById('sqft');
+  const floorsInput = document.getElementById('floors');
+  const result = document.getElementById('result');
+  const proposed = document.getElementById('proposed');
+
+  const formatNum = (n) => n.toLocaleString('en-US');
+
+  function calculate() {
+    const lotSqFt = parseFloat(sqftInput.value);
+    const floors = parseFloat(floorsInput.value);
+
+    if (!floors || floors <= 0) {
+      proposed.textContent = '—';
+    } else {
+      const buildingArea = floors * SQFT_PER_FLOOR;
+      proposed.textContent = formatNum(buildingArea) + ' sq ft';
+    }
+
+    if (!lotSqFt || lotSqFt <= 0 || !floors || floors <= 0) {
+      result.textContent = '—';
+      return;
+    }
+
+    const buildingArea = floors * SQFT_PER_FLOOR;
+    const far = buildingArea / lotSqFt;
+    result.textContent = far.toFixed(3);
+  }
+
+  sqftInput.addEventListener('input', calculate);
+  floorsInput.addEventListener('input', calculate);
+</script>
+</body>
+</html>
